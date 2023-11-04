@@ -4,7 +4,6 @@ const descrip=document.querySelector("#description");
 const catgory=document.querySelector("#category");
 const lists=document.querySelector("#items");
 form.addEventListener('submit',onsubmit);
-lists.addEventListener('click',deletefn);
 function onsubmit(e){
     let myoj={
     amount:amount.value,
@@ -20,21 +19,11 @@ function onsubmit(e){
     descrip.value="";
     catgory.value="";
 };
-function deletefn(e){
-    let arr=e.target.parentElement.innerText.split(" ");
-
-    e.preventDefault();
-    if(e.target.classList.contains('delete')){
-        localStorage.removeItem(arr[1]);
-        e.target.parentElement.style.display='none';
+function deletefn(id){
+        axios.delete(`https://crudcrud.com/api/700723434e2844dc8a71c58a72c93f68/appointmentdata/${id}`)
+        .then(res=> console.log(res))
+        .catch(err=>console.log(err));
     }
-    else if(e.target.classList.contains('edit')){
-        amount.value=arr[0];
-        descrip.value=arr[1];
-        catgory.value=arr[2];
-        e.target.parentElement.style.display='none';
-    }
-}
 window.addEventListener("DOMContentLoaded",()=>{
     axios.get("https://crudcrud.com/api/700723434e2844dc8a71c58a72c93f68/appointmentdata")
     .then((res)=>{
@@ -49,6 +38,7 @@ function showonscreen(obj){
     let amt=obj.amount
     let des=obj.descrip
     let catg=obj.catgory
+    let id=obj._id
     const li=document.createElement('li');
     li.className='list-group-item';
     const delbtn=document.createElement('button');
@@ -58,6 +48,8 @@ function showonscreen(obj){
     editbtn.appendChild(document.createTextNode('Edit'));
     editbtn.className='edit  btn btn-secondary';
     li.appendChild(document.createTextNode(`${amt} ${des} ${catg}`));
+    const chhtml=`<button onClick(${deletefn(id)})`;
+    li.innerHTML=li.innerHTML+chhtml;
     li.append(delbtn);
     li.append(editbtn);
     lists.appendChild(li);
